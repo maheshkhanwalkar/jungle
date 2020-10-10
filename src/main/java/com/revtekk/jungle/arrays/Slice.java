@@ -44,6 +44,8 @@ public class Slice<T> implements Iterable<T>
         this.arr = arr;
         this.start = start;
         this.end = end;
+
+        validateArgs();
     }
 
     /**
@@ -106,9 +108,36 @@ public class Slice<T> implements Iterable<T>
         arr[start + index] = elem;
     }
 
+    /**
+     * Create a new slice from the current slice
+     *
+     * The bounds provided for this new slice are relative to the current slice, so it allows
+     * for the creation of "sub"-slices
+     *
+     * @param start starting index
+     * @param end ending index (not inclusive)
+     * @return the new slice
+     */
+    public Slice<T> subSlice(int start, int end)
+    {
+        return new Slice<>(arr, this.start + start, this.start + end);
+    }
+
     @Override
     public Iterator<T> iterator()
     {
         return new SliceIterator<>(this, 0);
+    }
+
+    /**
+     * Validate the constructor arguments
+     * @throws IndexOutOfBoundsException if any of the arguments are out of bounds
+     */
+    private void validateArgs()
+    {
+        if(start >= arr.length)
+            throw new IndexOutOfBoundsException("starting index");
+        if(end > arr.length)
+            throw new IndexOutOfBoundsException("ending index");
     }
 }
