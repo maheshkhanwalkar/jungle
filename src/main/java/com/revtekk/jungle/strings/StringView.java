@@ -1,4 +1,4 @@
-package com.revtekk.jungle.string;
+package com.revtekk.jungle.strings;
 
 import java.util.Objects;
 
@@ -10,7 +10,7 @@ import java.util.Objects;
  * cannot be modified or swapped out and can always be recovered entirely but resetting
  * the view back to encompassing the entire string.
  *
- * TODO become feature-complete with String (for the most part)
+ * TODO become feature-parity with String (for the most part)
  */
 public class StringView
 {

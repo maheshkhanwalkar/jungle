@@ -1,4 +1,4 @@
-package com.revtekk.jungle.string;
+package com.revtekk.jungle.strings;
 
 import org.junit.Test;
 
