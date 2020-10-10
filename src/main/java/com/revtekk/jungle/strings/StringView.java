@@ -11,6 +11,7 @@ import java.util.Objects;
  * the view back to encompassing the entire string.
  *
  * TODO become feature-parity with String (for the most part)
+ * TODO add support for efficient substring operations -- similar to Slice
  */
 public class StringView
 {
@@ -87,6 +88,15 @@ public class StringView
     {
         int actual = reverse ? str.length() - 1 - index : index;
         return str.charAt(actual);
+    }
+
+    /**
+     * Get the length of the view
+     * @return the length
+     */
+    public int length()
+    {
+        return str.length();
     }
 
     /**
