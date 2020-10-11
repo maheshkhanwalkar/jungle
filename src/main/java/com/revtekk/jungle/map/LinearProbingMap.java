@@ -198,6 +198,10 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
      *   1. If the key is found, call func(pos), where pos is the position within the map for the key
      *   2. If the key isn't found, call func(pos) on the first null entry in the map
      *
+     * FIXME: there is a subtle bug! When func() is a get, the search exists prematurely when it encounters
+     *  a deleted entry returning null; however, it should just skip deleted entries, which is a different use-case
+     *  than with put() which should overwrite a deleted entry
+     *
      * Users of this method can perform whatever action on the map entry and return whatever value, as needed.
      *
      * @param key key object
@@ -262,6 +266,71 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
             }
 
         }, map);
+    }
+
+    /**
+     * The {@code MapEntry} class implements a key-value pair entry which resides within
+     * the {@code LinearProbingMap} implementation
+     *
+     * The instances of this class also contain a marker for deletion, which is a required property
+     * for correctness within the linear probing, open addressing hashmap scheme.
+     *
+     * When the 'deleted' flag is set, the entry is to be considered "effectively null", i.e. can be
+     * safely overwritten by a put() or skipped by a get()
+     *
+     * @param <K> key type
+     * @param <V> value type
+     */
+    private static final class MapEntry<K, V> implements Map.Entry<K, V>
+    {
+        private final K key;
+        private V value;
+        private boolean deleted;
+
+        public MapEntry(K key, V value)
+        {
+            this.key = key;
+            this.value = value;
+            this.deleted = false;
+        }
+
+        @Override
+        public K getKey()
+        {
+            return key;
+        }
+
+        @Override
+        public V getValue()
+        {
+            return value;
+        }
+
+        @Override
+        public V setValue(V value)
+        {
+            V prev = this.value;
+            this.value = value;
+
+            return prev;
+        }
+
+        /**
+         * Mark the entry as deleted
+         */
+        public void markAsDeleted()
+        {
+            deleted = true;
+        }
+
+        /**
+         * Check the delete status of the entry
+         * @return true if deleted, false otherwise
+         */
+        public boolean isDeleted()
+        {
+            return deleted;
+        }
     }
 
     /**
