@@ -59,7 +59,7 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
     @Override
     public boolean containsKey(Object key)
     {
-        Boolean raw =  search(key, (pos) -> {
+        Boolean raw = search(key, (pos) -> {
             if(map[pos] == null || map[pos].isDeleted())
                 return false;
 
@@ -195,8 +195,7 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
      *   1. If the key is found, call func(pos), where pos is the position within the map for the key
      *   2. If the key isn't found, call func(pos) on the first null entry in the map
      *
-     * Users of this method can perform whatever action and return whatever value (as long as it is of type V)
-     * on the map entry, as needed.
+     * Users of this method can perform whatever action on the map entry and return whatever value, as needed.
      *
      * @param key key object
      * @param func function to call on the located map entry
