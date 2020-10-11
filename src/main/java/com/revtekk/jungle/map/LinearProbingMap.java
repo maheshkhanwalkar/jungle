@@ -7,6 +7,9 @@ import java.util.function.Function;
  * The {@code LinearProbingMap} class implements a hash map with a linear probing, open
  * addressing scheme
  *
+ * This map implementation does not currently support removal of elements from any of the
+ * views, i.e. keySet(), values(), or entrySet() and doing so will throw an exception.
+ *
  * @param <K> the type of keys in the map
  * @param <V> the type of values in the map
  */
@@ -41,7 +44,7 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
      */
     public LinearProbingMap(int initialCapacity)
     {
-        this.map = new MapEntry[INITIAL_CAPACITY];
+        this.map = new MapEntry[initialCapacity];
     }
 
     @Override
