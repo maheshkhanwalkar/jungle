@@ -64,7 +64,7 @@ public class LinearProbingMapTest
     @Test
     public void testDeleteSkipping()
     {
-        LinearProbingMap<Integer, Integer> map = new LinearProbingMap<>();
+        LinearProbingMap<Integer, Integer> map = new LinearProbingMap<>(256);
 
         for(int i = 0; i < 100; i++)
             map.put(i, i);
@@ -73,5 +73,20 @@ public class LinearProbingMapTest
         map.remove(8);
 
         assertTrue(map.containsKey(262));
+    }
+
+    @Test
+    public void testWrapAround()
+    {
+        LinearProbingMap<Integer, Integer> map = new LinearProbingMap<>(256);
+
+        // Fill up entries 10..255 in the table
+        for(int i = 200; i < 256; i++)
+            map.put(i, i);
+
+        map.put(457, 457);
+
+        assertTrue(map.containsKey(457));
+        assertEquals((int)map.get(457), 457);
     }
 }
