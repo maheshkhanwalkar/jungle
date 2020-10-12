@@ -210,52 +210,33 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
         int pos = computeIndex(key, map.length);
         int mark = -1;
 
-        for(int i = pos; i < map.length; i++)
+        int[] ranges = {pos, map.length, 0, pos};
+
+        for(int j = 0; j < ranges.length; j += 2)
         {
-            if(map[i] == null)
+            for(int i = ranges[j]; i < ranges[j + 1]; i++)
             {
-                if(mark != -1)
-                    return func.apply(mark);
-                else
-                    return func.apply(i);
+                if(map[i] == null)
+                {
+                    if(mark != -1)
+                        return func.apply(mark);
+                    else
+                        return func.apply(i);
+                }
+
+                if(map[i].isDeleted())
+                {
+                    if(mark == -1)
+                        mark = i;
+
+                    continue;
+                }
+
+                if(!map[i].getKey().equals(key))
+                    continue;
+
+                return func.apply(i);
             }
-
-            if(map[i].isDeleted())
-            {
-                if(mark == -1)
-                    mark = i;
-
-                continue;
-            }
-
-            if(!map[i].getKey().equals(key))
-                continue;
-
-            return func.apply(i);
-        }
-
-        for(int i = 0; i < pos; i++)
-        {
-            if(map[i] == null)
-            {
-                if(mark != -1)
-                    return func.apply(mark);
-                else
-                    return func.apply(i);
-            }
-
-            if(map[i].isDeleted())
-            {
-                if(mark == -1)
-                    mark = i;
-
-                continue;
-            }
-
-            if(!map[i].getKey().equals(key))
-                continue;
-
-            return func.apply(i);
         }
 
         if(mark != -1)
