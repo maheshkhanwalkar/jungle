@@ -198,10 +198,6 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
      *   1. If the key is found, call func(pos), where pos is the position within the map for the key
      *   2. If the key isn't found, call func(pos) on the first null entry in the map
      *
-     * FIXME: there is a subtle bug! When func() is a get, the search exists prematurely when it encounters
-     *  a deleted entry returning null; however, it should just skip deleted entries, which is a different use-case
-     *  than with put() which should overwrite a deleted entry
-     *
      * Users of this method can perform whatever action on the map entry and return whatever value, as needed.
      *
      * @param key key object
@@ -212,11 +208,25 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
     private <R> R search(Object key, Function<Integer, R> func, MapEntry<K, V>[] map)
     {
         int pos = computeIndex(key, map.length);
+        int mark = -1;
 
         for(int i = pos; i < map.length; i++)
         {
-            if(map[i] == null || map[i].isDeleted())
-                return func.apply(i);
+            if(map[i] == null)
+            {
+                if(mark != -1)
+                    return func.apply(mark);
+                else
+                    return func.apply(i);
+            }
+
+            if(map[i].isDeleted())
+            {
+                if(mark == -1)
+                    mark = i;
+
+                continue;
+            }
 
             if(!map[i].getKey().equals(key))
                 continue;
@@ -226,14 +236,30 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
 
         for(int i = 0; i < pos; i++)
         {
-            if(map[i] == null || map[i].isDeleted())
-                return func.apply(i);
+            if(map[i] == null)
+            {
+                if(mark != -1)
+                    return func.apply(mark);
+                else
+                    return func.apply(i);
+            }
+
+            if(map[i].isDeleted())
+            {
+                if(mark == -1)
+                    mark = i;
+
+                continue;
+            }
 
             if(!map[i].getKey().equals(key))
                 continue;
 
             return func.apply(i);
         }
+
+        if(mark != -1)
+            return func.apply(mark);
 
         return null;
     }
