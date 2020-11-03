@@ -9,7 +9,7 @@ public class LinearProbingMapTest
     @Test
     public void simplePutGet()
     {
-        LinearProbingMap<Integer, Integer> map = new LinearProbingMap<>();
+        LinearProbingMapJava<Integer, Integer> map = new LinearProbingMapJava<>();
         final int NUM_ENTRIES = 1000;
 
         for(int i = 0; i < NUM_ENTRIES; i++)
@@ -27,7 +27,7 @@ public class LinearProbingMapTest
     @Test
     public void testPutDelete()
     {
-        LinearProbingMap<Integer, Integer> map = new LinearProbingMap<>();
+        LinearProbingMapJava<Integer, Integer> map = new LinearProbingMapJava<>();
 
         final int START = 800;
         final int MID = START * 2;
@@ -64,7 +64,7 @@ public class LinearProbingMapTest
     @Test
     public void testDeleteSkipping()
     {
-        LinearProbingMap<Integer, Integer> map = new LinearProbingMap<>(256);
+        LinearProbingMapJava<Integer, Integer> map = new LinearProbingMapJava<>(256);
 
         for(int i = 0; i < 100; i++)
             map.put(i, i);
@@ -78,7 +78,7 @@ public class LinearProbingMapTest
     @Test
     public void testWrapAround()
     {
-        LinearProbingMap<Integer, Integer> map = new LinearProbingMap<>(256);
+        LinearProbingMapJava<Integer, Integer> map = new LinearProbingMapJava<>(256);
 
         // Fill up entries 10..255 in the table
         for(int i = 200; i < 256; i++)
