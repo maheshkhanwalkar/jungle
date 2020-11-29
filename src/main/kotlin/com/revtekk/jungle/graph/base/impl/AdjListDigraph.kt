@@ -91,6 +91,6 @@ internal class AdjListDigraph<W>: Digraph<W> {
  * each time the map lookup is required - instead it is now replaced by map.safeGet(key) which is
  * much cleaner.
  */
-private inline fun <K, W> MutableMap<K, MutableSet<W>>.safeGet(key: K): MutableSet<W> {
-    return this.getOrPut(key) { mutableSetOf() }
+private fun <K, W> MutableMap<K, MutableSet<W>>.safeGet(key: K): MutableSet<W> {
+    return getOrPut(key) { mutableSetOf() }
 }
