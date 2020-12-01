@@ -13,7 +13,7 @@ import java.util.function.Function;
  * @param <K> the type of keys in the map
  * @param <V> the type of values in the map
  */
-public class LinearProbingMap<K, V> extends AbstractMap<K, V>
+public class LinearProbingMapJava<K, V> extends AbstractMap<K, V>
 {
     private static final int INITIAL_CAPACITY = 256;
     private static final float LOAD_CAPACITY = 0.75f;
@@ -29,7 +29,7 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
     /**
      * Create a new linear probing hashmap
      */
-    public LinearProbingMap()
+    public LinearProbingMapJava()
     {
         this.map = new MapEntry[INITIAL_CAPACITY];
     }
@@ -42,7 +42,7 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
      *
      * @param initialCapacity initial requested capacity
      */
-    public LinearProbingMap(int initialCapacity)
+    public LinearProbingMapJava(int initialCapacity)
     {
         this.map = new MapEntry[initialCapacity];
     }
@@ -360,13 +360,13 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
         @Override
         public int size()
         {
-            return LinearProbingMap.this.size();
+            return LinearProbingMapJava.this.size();
         }
 
         @Override
         public boolean contains(Object o)
         {
-            return LinearProbingMap.this.containsKey(o);
+            return LinearProbingMapJava.this.containsKey(o);
         }
     }
 
@@ -438,7 +438,7 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
         @Override
         public int size()
         {
-            return LinearProbingMap.this.size();
+            return LinearProbingMapJava.this.size();
         }
 
         @Override
@@ -449,7 +449,7 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
                 return super.contains(o);
 
             MapEntry<K, V> entry = (MapEntry<K,V>)o;
-            V value = LinearProbingMap.this.get(entry.getKey());
+            V value = LinearProbingMapJava.this.get(entry.getKey());
 
             if(value == null)
                 return entry.getValue() == null;
@@ -525,7 +525,7 @@ public class LinearProbingMap<K, V> extends AbstractMap<K, V>
         @Override
         public int size()
         {
-            return LinearProbingMap.this.size();
+            return LinearProbingMapJava.this.size();
         }
     }
 
