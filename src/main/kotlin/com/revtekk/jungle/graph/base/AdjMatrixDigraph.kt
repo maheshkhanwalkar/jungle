@@ -1,6 +1,6 @@
-package com.revtekk.jungle.graph.base.impl
+package com.revtekk.jungle.graph.base
 
-import com.revtekk.jungle.graph.base.Digraph
+import java.lang.IllegalArgumentException
 import java.util.*
 
 /**
@@ -12,6 +12,7 @@ import java.util.*
 internal class AdjMatrixDigraph<W>(num: Int): Digraph<W> {
     private val matrix: Array<IntArray> = Array(num) { IntArray(num) }
     private val edges = mutableMapOf<Pair<Int, Int>, W>()
+    private val vSet = (0 until num).toSet()
 
     override fun addEdge(start: Int, end: Int, weight: W) {
         matrix[start][end] = 1
@@ -27,9 +28,49 @@ internal class AdjMatrixDigraph<W>(num: Int): Digraph<W> {
         return matrix[start][end] == 1
     }
 
-    override fun bfs(start: Int, apply: (vertex: Int) -> Unit) {
+    override fun getWeight(start: Int, end: Int): W {
+        return edges[start to end] ?: throw IllegalArgumentException("no edge from $start to $end")
+    }
+
+    override fun vertexSet(): Set<Int> = vSet
+
+    override fun out(vertex: Int): Set<Int> =
+        matrix[vertex].mapIndexed {
+            index, elem -> index to elem
+        }.filter { it.second != 0 }.map {
+            (index, _) -> index
+        }.toSet()
+
+    override fun copy(weightCopy: ((W) -> W)?): Digraph<W> {
+        val copy = AdjMatrixDigraph<W>(matrix.size)
+
+        // Copy weight mapping
+        if(weightCopy != null) {
+            for(edge in edges) {
+                copy.edges[edge.key.copy()] = weightCopy(edge.value)
+            }
+        } else {
+            copy.edges.putAll(edges)
+        }
+
+        // Copy adjacency matrix
+        for(i in matrix.indices) {
+            for(j in matrix.indices) {
+                if(weightCopy != null) {
+                    copy.matrix[i][j] = matrix[i][j]
+                }
+
+                copy.matrix[i][j] = matrix[i][j]
+            }
+        }
+
+        return copy
+    }
+
+    override fun bfs(start: Int, apply: (vertex: Int, prevMap: Map<Int, Int>) -> Unit) {
         val visited = mutableSetOf<Int>()
         val queue = LinkedList<Int>()
+        val prev = mutableMapOf<Int, Int>()
 
         queue.add(start)
 
@@ -43,12 +84,17 @@ internal class AdjMatrixDigraph<W>(num: Int): Digraph<W> {
             visited.add(vertex)
 
             // Perform custom action
-            apply(vertex)
+            apply(vertex, prev)
 
-            // Add all the neighbours
+            // Add all the neighbours and update prev map
             for(i in matrix[vertex].indices) {
-                if(matrix[vertex][i] != 0)
+                if(matrix[vertex][i] != 0) {
                     queue.add(i)
+
+                    if(i != start) {
+                        prev.putIfAbsent(i, vertex)
+                    }
+                }
             }
         }
     }
